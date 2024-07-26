@@ -23,12 +23,6 @@ return new class extends Migration
             $table->string('level_count');
             $table->unsignedBigInteger('site_id');
             $table->foreign('site_id')->references('id')->on('sites')->onDelete('cascade');
-            $table->text('structure_state')->nullable(); 
-            $table->text('electricity_inventory')->nullable(); 
-            $table->text('plumbing_state')->nullable(); 
-            $table->text('cvc_state')->nullable(); 
-            $table->text('fire_safety_evaluation')->nullable(); 
-            $table->text('elevator_escalator_state')->nullable();
             $table->timestamps();
         });
     }

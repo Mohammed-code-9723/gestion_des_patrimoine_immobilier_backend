@@ -21,6 +21,7 @@ return new class extends Migration
             $table->enum('condition', ['C1', 'C2', 'C3', 'C4']);
             $table->enum('severity_max', ['S1', 'S2', 'S3', 'S4']);
             $table->enum('risk_level', ['R1', 'R2', 'R3', 'R4']);
+            $table->text('description')->nullable();
             $table->unsignedBigInteger('building_id');
             $table->foreign('building_id')->references('id')->on('buildings')->onDelete('cascade');
             $table->timestamps();

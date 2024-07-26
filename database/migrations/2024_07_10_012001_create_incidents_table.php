@@ -17,10 +17,8 @@ return new class extends Migration
             $table->text('description');
             $table->enum('status', ['Open', 'InProgress', 'Closed']);
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('building_id');
             $table->unsignedBigInteger('component_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('building_id')->references('id')->on('buildings')->onDelete('cascade');
             $table->foreign('component_id')->references('id')->on('components')->onDelete('set null');
             $table->timestamps();
         });

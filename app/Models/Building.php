@@ -40,19 +40,4 @@ class Building extends Model
     {
         return $this->hasMany(Incident::class);
     }
-
-    public function maintenances()
-    {
-        return $this->hasMany(Maintenance::class);
-    }
-
-    public function conformities()
-    {
-        return $this->hasMany(Conformity::class);
-    }
-
-    public function works()
-    {
-        return $this->hasMany(Work::class);
-    }
 }
