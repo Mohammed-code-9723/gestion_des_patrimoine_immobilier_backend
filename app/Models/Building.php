@@ -18,12 +18,6 @@ class Building extends Model
         'type',
         'level_count',
         'site_id',
-        'structure_state',        
-        'electricity_inventory',  
-        'plumbing_state',         
-        'cvc_state',              
-        'fire_safety_evaluation', 
-        'elevator_escalator_state'
     ];
 
     public function site()

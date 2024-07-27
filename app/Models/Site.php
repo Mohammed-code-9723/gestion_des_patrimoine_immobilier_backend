@@ -17,6 +17,7 @@ class Site extends Model
         'city',
         'country',
         'floor_area',
+        'workspace_id',
     ];
 
     public function buildings()
