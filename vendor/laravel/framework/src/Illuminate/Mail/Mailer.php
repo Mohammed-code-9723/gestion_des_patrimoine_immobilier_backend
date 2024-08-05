@@ -618,9 +618,11 @@ class Mailer implements MailerContract, MailQueueContract
      */
     protected function dispatchSentEvent($message, $data = [])
     {
-        $this->events?->dispatch(
-            new MessageSent($message, $data)
-        );
+        if ($this->events) {
+            $this->events->dispatch(
+                new MessageSent($message, $data)
+            );
+        }
     }
 
     /**

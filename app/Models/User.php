@@ -11,8 +11,11 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens,HasFactory;
+    protected $casts = [
+        'permissions' => 'json', 
+    ];
 
-    protected $fillable=["id","name","email","password","password_confirmation","role"];
+    protected $fillable=["id","name","email","password","password_confirmation","role","permissions"];
     protected $hidden = [
         'password', 'remember_token',
     ];
@@ -22,6 +25,10 @@ class User extends Authenticatable implements JWTSubject
     public function workspaces()
     {
         return $this->hasMany(Workspace::class);
+    }
+
+    public function activities(){
+        return $this->hasMany(Activity::class);
     }
 
     public function getJWTIdentifier()

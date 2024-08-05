@@ -24,6 +24,7 @@ return new class extends Migration
             $table->unsignedBigInteger('workspace_id');
             $table->foreign('workspace_id')->references('id')->on('workspaces')->onDelete('cascade');
             $table->timestamps();
+            //add location and address 
         });
     }
 

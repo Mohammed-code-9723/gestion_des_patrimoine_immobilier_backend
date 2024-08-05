@@ -261,7 +261,7 @@ class MailManager implements FactoryContract
      * Create an instance of the Symfony Amazon SES V2 Transport driver.
      *
      * @param  array  $config
-     * @return \Illuminate\Mail\Transport\SesV2Transport
+     * @return \Illuminate\Mail\Transport\Se2VwTransport
      */
     protected function createSesV2Transport(array $config)
     {
@@ -303,7 +303,7 @@ class MailManager implements FactoryContract
     protected function createResendTransport(array $config)
     {
         return new ResendTransport(
-            Resend::client($config['key'] ?? $this->app['config']->get('services.resend.key')),
+            Resend::client($this->app['config']->get('services.resend.key')),
         );
     }
 

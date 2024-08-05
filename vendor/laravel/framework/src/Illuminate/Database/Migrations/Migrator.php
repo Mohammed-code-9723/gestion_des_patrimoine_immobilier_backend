@@ -185,7 +185,9 @@ class Migrator
 
         $this->fireMigrationEvent(new MigrationsEnded('up'));
 
-        $this->output?->writeln('');
+        if ($this->output) {
+            $this->output->writeln('');
+        }
     }
 
     /**
@@ -240,7 +242,9 @@ class Migrator
         }
 
         return tap($this->rollbackMigrations($migrations, $paths, $options), function () {
-            $this->output?->writeln('');
+            if ($this->output) {
+                $this->output->writeln('');
+            }
         });
     }
 
@@ -327,7 +331,9 @@ class Migrator
         }
 
         return tap($this->resetMigrations($migrations, Arr::wrap($paths), $pretend), function () {
-            $this->output?->writeln('');
+            if ($this->output) {
+                $this->output->writeln('');
+            }
         });
     }
 
@@ -754,6 +760,8 @@ class Migrator
      */
     public function fireMigrationEvent($event)
     {
-        $this->events?->dispatch($event);
+        if ($this->events) {
+            $this->events->dispatch($event);
+        }
     }
 }

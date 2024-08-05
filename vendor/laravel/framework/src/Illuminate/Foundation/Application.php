@@ -45,7 +45,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
      *
      * @var string
      */
-    const VERSION = '11.14.0';
+    const VERSION = '11.5.0';
 
     /**
      * The base path for the Laravel installation.
@@ -99,7 +99,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
     /**
      * All of the registered service providers.
      *
-     * @var array<string, \Illuminate\Support\ServiceProvider>
+     * @var \Illuminate\Support\ServiceProvider[]
      */
     protected $serviceProviders = [];
 
@@ -193,13 +193,6 @@ class Application extends Container implements ApplicationContract, CachesConfig
      * @var string
      */
     protected $namespace;
-
-    /**
-     * Indicates if the framework's base configuration should be merged.
-     *
-     * @var bool
-     */
-    protected $mergeFrameworkConfiguration = true;
 
     /**
      * The prefixes of absolute cache paths for use during normalization.
@@ -598,10 +591,6 @@ class Application extends Container implements ApplicationContract, CachesConfig
             return $this->joinPaths($this->storagePath ?: $_ENV['LARAVEL_STORAGE_PATH'], $path);
         }
 
-        if (isset($_SERVER['LARAVEL_STORAGE_PATH'])) {
-            return $this->joinPaths($this->storagePath ?: $_SERVER['LARAVEL_STORAGE_PATH'], $path);
-        }
-
         return $this->joinPaths($this->storagePath ?: $this->basePath('storage'), $path);
     }
 
@@ -904,9 +893,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
      */
     public function getProvider($provider)
     {
-        $name = is_string($provider) ? $provider : get_class($provider);
-
-        return $this->serviceProviders[$name] ?? null;
+        return array_values($this->getProviders($provider))[0] ?? null;
     }
 
     /**
@@ -941,11 +928,9 @@ class Application extends Container implements ApplicationContract, CachesConfig
      */
     protected function markAsRegistered($provider)
     {
-        $class = get_class($provider);
+        $this->serviceProviders[] = $provider;
 
-        $this->serviceProviders[$class] = $provider;
-
-        $this->loadedProviders[$class] = true;
+        $this->loadedProviders[get_class($provider)] = true;
     }
 
     /**
@@ -1206,28 +1191,6 @@ class Application extends Container implements ApplicationContract, CachesConfig
     }
 
     /**
-     * Determine if the framework's base configuration should be merged.
-     *
-     * @return bool
-     */
-    public function shouldMergeFrameworkConfiguration()
-    {
-        return $this->mergeFrameworkConfiguration;
-    }
-
-    /**
-     * Indicate that the framework's base configuration should not be merged.
-     *
-     * @return $this
-     */
-    public function dontMergeFrameworkConfiguration()
-    {
-        $this->mergeFrameworkConfiguration = false;
-
-        return $this;
-    }
-
-    /**
      * Determine if middleware has been disabled for the application.
      *
      * @return bool
@@ -1421,7 +1384,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
     /**
      * Get the service providers that have been loaded.
      *
-     * @return array<string, boolean>
+     * @return array
      */
     public function getLoadedProviders()
     {

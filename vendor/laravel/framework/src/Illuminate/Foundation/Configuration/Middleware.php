@@ -418,7 +418,9 @@ class Middleware
         ]));
 
         $middleware = array_map(function ($middleware) {
-            return $this->replacements[$middleware] ?? $middleware;
+            return isset($this->replacements[$middleware])
+                ? $this->replacements[$middleware]
+                : $middleware;
         }, $middleware);
 
         return array_values(array_filter(

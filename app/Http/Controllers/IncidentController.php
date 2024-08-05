@@ -1,11 +1,10 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Incident;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Events\UserAction;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class IncidentController extends Controller
@@ -19,6 +18,10 @@ class IncidentController extends Controller
         }
 
         $incidents = Incident::where('building_id', $buildingId)->get();
+
+        // Dispatch event
+        event(new UserAction($user->id, 'viewed_incidents', 'User viewed incidents for building ' . $buildingId));
+
         return response()->json($incidents);
     }
 
@@ -50,6 +53,9 @@ class IncidentController extends Controller
         $incident->component_id = $request->component_id;
         $incident->save();
 
+        // Dispatch event
+        event(new UserAction($user->id, 'created_incident', 'User created an incident for building ' . $buildingId));
+
         return response()->json($incident);
     }
 
@@ -66,6 +72,9 @@ class IncidentController extends Controller
         if (!$incident) {
             return response()->json(['message' => 'Incident not found'], 404);
         }
+
+        // Dispatch event
+        event(new UserAction($user->id, 'viewed_incident', 'User viewed incident ' . $incidentId . ' for building ' . $buildingId));
 
         return response()->json($incident);
     }
@@ -101,6 +110,9 @@ class IncidentController extends Controller
         $incident->component_id = $request->component_id;
         $incident->save();
 
+        // Dispatch event
+        event(new UserAction($user->id, 'updated_incident', 'User updated incident ' . $incidentId . ' for building ' . $buildingId));
+
         return response()->json($incident);
     }
 
@@ -119,6 +131,9 @@ class IncidentController extends Controller
         }
 
         $incident->delete();
+
+        // Dispatch event
+        event(new UserAction($user->id, 'deleted_incident', 'User deleted incident ' . $incidentId . ' for building ' . $buildingId));
 
         return response()->json(['message' => 'Incident deleted']);
     }

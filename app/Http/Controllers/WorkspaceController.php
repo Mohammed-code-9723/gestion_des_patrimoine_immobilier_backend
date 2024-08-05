@@ -8,9 +8,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use App\Events\UserAction;
 
 class WorkspaceController extends Controller
 {
+    public function allWorkspaces(){
+        $allWorkspaces = Workspace::with('projects')->with('sites')->get();
+        return response()->json($allWorkspaces);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -24,7 +30,6 @@ class WorkspaceController extends Controller
             }
 
             $workspaces = $user->workspaces;
-
             return response()->json($workspaces);
         } catch (JWTException $e) {
             return response()->json(['message' => 'Could not authenticate token'], 401);
@@ -59,6 +64,7 @@ class WorkspaceController extends Controller
             ]);
 
             if ($workspace) {
+                event(new UserAction($user->id, 'create_workspace', 'Created a new workspace.'));
                 return response()->json($workspace, 201);
             } else {
                 return response()->json(['message' => 'Workspace not created'], 500);
@@ -124,6 +130,7 @@ class WorkspaceController extends Controller
 
             $workspace->save();
 
+            event(new UserAction($user->id, 'update_workspace', 'Updated a workspace.'));
             return response()->json($workspace);
         } catch (JWTException $e) {
             return response()->json(['message' => 'Could not authenticate token'], 401);
@@ -150,6 +157,7 @@ class WorkspaceController extends Controller
 
             $workspace->delete();
 
+            event(new UserAction($user->id, 'delete_workspace', 'Deleted a workspace.'));
             return response()->json(['message' => 'Workspace deleted successfully'], 200);
         } catch (JWTException $e) {
             return response()->json(['message' => 'Could not authenticate token'], 401);

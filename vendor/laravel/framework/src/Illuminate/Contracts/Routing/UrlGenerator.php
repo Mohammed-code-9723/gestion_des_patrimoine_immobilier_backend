@@ -2,9 +2,6 @@
 
 namespace Illuminate\Contracts\Routing;
 
-/**
- * @method string query(string $path, array $query = [], mixed $extra = [], bool|null $secure = null)
- */
 interface UrlGenerator
 {
     /**

@@ -56,7 +56,7 @@ class SesV2Transport extends AbstractTransport implements Stringable
 
             foreach ($message->getOriginalMessage()->getHeaders()->all() as $header) {
                 if ($header instanceof MetadataHeader) {
-                    $options['EmailTags'][] = ['Name' => $header->getKey(), 'Value' => $header->getValue()];
+                    $options['Tags'][] = ['Name' => $header->getKey(), 'Value' => $header->getValue()];
                 }
             }
         }

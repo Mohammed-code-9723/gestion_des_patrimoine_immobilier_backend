@@ -16,6 +16,10 @@ class BuildingFactory extends Factory
             'name' => $this->faker->word(),
             'activity' => $this->faker->word(),
             'address' => $this->faker->address(),
+            'location' => json_encode([
+                $this->faker->latitude(),
+                $this->faker->longitude()
+            ]),
             'year_of_construction' => $this->faker->year(),
             'surface' => $this->faker->randomFloat(2, 100, 10000),
             'type' => $this->faker->word(),
@@ -23,4 +27,5 @@ class BuildingFactory extends Factory
             'site_id' => Site::pluck('id')->random(),
         ];
     }
+
 }

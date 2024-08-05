@@ -102,7 +102,7 @@ trait InteractsWithPivotTable
             $detach = array_diff($current, array_keys($records));
 
             if (count($detach) > 0) {
-                $this->detach($detach, false);
+                $this->detach($detach);
 
                 $changes['detached'] = $this->castKeys($detach);
             }

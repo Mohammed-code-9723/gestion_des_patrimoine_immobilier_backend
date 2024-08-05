@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Scenario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Events\UserAction;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ScenarioController extends Controller
@@ -19,6 +19,10 @@ class ScenarioController extends Controller
         }
 
         $scenarios = Scenario::where('project_id', $projectId)->get();
+
+        // Dispatch event
+        event(new UserAction($user->id, 'viewed_scenarios', 'User viewed scenarios for project ' . $projectId));
+
         return response()->json($scenarios);
     }
 
@@ -55,6 +59,9 @@ class ScenarioController extends Controller
         $scenario->project_id = $projectId;
         $scenario->save();
 
+        // Dispatch event
+        event(new UserAction($user->id, 'created_scenario', 'User created a new scenario for project ' . $projectId));
+
         return response()->json($scenario);
     }
 
@@ -71,6 +78,9 @@ class ScenarioController extends Controller
         if (!$scenario) {
             return response()->json(['message' => 'Scenario not found'], 404);
         }
+
+        // Dispatch event
+        event(new UserAction($user->id, 'viewed_scenario', 'User viewed scenario ' . $scenarioId . ' for project ' . $projectId));
 
         return response()->json($scenario);
     }
@@ -112,6 +122,9 @@ class ScenarioController extends Controller
         $scenario->status = $request->status;
         $scenario->save();
 
+        // Dispatch event
+        event(new UserAction($user->id, 'updated_scenario', 'User updated scenario ' . $scenarioId . ' for project ' . $projectId));
+
         return response()->json($scenario);
     }
 
@@ -130,6 +143,9 @@ class ScenarioController extends Controller
         }
 
         $scenario->delete();
+
+        // Dispatch event
+        event(new UserAction($user->id, 'deleted_scenario', 'User deleted scenario ' . $scenarioId . ' for project ' . $projectId));
 
         return response()->json(['message' => 'Scenario deleted']);
     }

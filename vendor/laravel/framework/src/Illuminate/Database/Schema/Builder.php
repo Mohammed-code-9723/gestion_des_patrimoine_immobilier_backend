@@ -293,7 +293,7 @@ class Builder
         $columns = $this->getColumns($table);
 
         foreach ($columns as $value) {
-            if (strtolower($value['name']) === strtolower($column)) {
+            if (strtolower($value['name']) === $column) {
                 return $fullDefinition ? $value['type'] : $value['type_name'];
             }
         }

@@ -7,9 +7,15 @@ use App\Models\Site;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Events\UserAction;
 
 class SiteController extends Controller
 {
+    public function allSites(){
+        $allSites=Site::with('buildings')->get();
+        return response()->json($allSites);
+    }
+    
     public function index($workspaceId)
     {
         // Retrieve the authenticated user
@@ -75,6 +81,8 @@ class SiteController extends Controller
         $site->floor_area = $request->floor_area;
         $site->workspace_id = $workspace->id;
         $site->save();
+
+        event(new UserAction($user->id, 'created_site', 'User created a new site'));
 
         return response()->json($site);
     }
@@ -156,6 +164,8 @@ class SiteController extends Controller
         $site->workspace_id = $workspace->id;
         $site->save();
 
+        event(new UserAction($user->id, 'updated_site', 'User updated a site'));
+
         return response()->json($site);
     }
 
@@ -183,6 +193,8 @@ class SiteController extends Controller
         }
 
         $site->delete();
+
+        event(new UserAction($user->id, 'deleted_site', 'User deleted a site'));
 
         return response()->json(['message' => 'site deleted']);
     }

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('activity');
             $table->string('address');
+            $table->json('location')->nullable();
             $table->integer('year_of_construction');
             $table->float('surface');
             $table->string('type');
@@ -24,6 +25,7 @@ return new class extends Migration
             $table->unsignedBigInteger('site_id');
             $table->foreign('site_id')->references('id')->on('sites')->onDelete('cascade');
             $table->timestamps();
+            //add location and address
         });
     }
 

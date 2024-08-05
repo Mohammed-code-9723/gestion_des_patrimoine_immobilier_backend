@@ -1,4 +1,5 @@
 <?php
+// database/factories/UserFactory.php
 
 namespace Database\Factories;
 
@@ -6,41 +7,77 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
- */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
-    protected static ?string $password;
-
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         $plainPassword = fake()->password();
+        $role = fake()->randomElement(["admin", "superadmin", "technicien", "ingenieur", "manager"]);
+        $permissions = $this->getPermissionsForRole($role);
+
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'password' => Hash::make($plainPassword),
             'password_confirmation' => $plainPassword,
-            'role'=>fake()->randomElement(['Gestionnaire', 'Responsable', 'Directeur', 'ComplianceOfficer', 'EndUser']),
+            'role' => $role,
+            'permissions' => json_encode($permissions),
             'remember_token' => Str::random(10),
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
-    public function unverified(): static
+    private function getPermissionsForRole($role)
     {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-        ]);
+        $permissions = [
+            'dashboard' => ['read']
+        ];
+
+        switch ($role) {
+            case 'superadmin':
+                $permissions['workspaces'] = ['create', 'read', 'update', 'delete'];
+                $permissions['projects'] = ['create', 'read', 'update', 'delete'];
+                $permissions['sites'] = ['create', 'read', 'update', 'delete'];
+                $permissions['buildings'] = ['create', 'read', 'update', 'delete'];
+                $permissions['components'] = ['create', 'read', 'update', 'delete'];
+                $permissions['incidents'] = ['create', 'read', 'update', 'delete'];
+                $permissions['settings'] = ['read', 'update'];
+                $permissions['user_management'] = ['create', 'read', 'update', 'delete'];
+                break;
+
+            case 'admin':
+                $permissions['workspaces'] = ['create', 'read', 'update', 'delete'];
+                $permissions['projects'] = ['create', 'read', 'update', 'delete'];
+                $permissions['sites'] = ['create', 'read', 'update', 'delete'];
+                $permissions['buildings'] = ['read'];
+                $permissions['components'] = ['read'];
+                $permissions['incidents'] = ['create', 'read', 'update', 'delete'];
+                $permissions['reports'] = ['create', 'read'];
+                break;
+
+            case 'manager':
+                $permissions['projects'] = ['create', 'read', 'update', 'delete'];
+                $permissions['sites'] = ['create', 'read', 'update', 'delete'];
+                $permissions['buildings'] = ['read'];
+                $permissions['components'] = ['read'];
+                $permissions['incidents'] = ['create', 'read', 'update', 'delete'];
+                break;
+
+            case 'ingenieur':
+                $permissions['sites'] = ['read'];
+                $permissions['buildings'] = ['read'];
+                $permissions['components'] = ['read'];
+                $permissions['incidents'] = ['create', 'read', 'update'];
+                $permissions['reports'] = ['read'];
+                break;
+
+            case 'technicien':
+                $permissions['sites'] = ['read'];
+                $permissions['components'] = ['read'];
+                $permissions['incidents'] = ['create', 'read', 'update'];
+                $permissions['maintenance'] = ['read', 'create', 'update'];
+                break;
+        }
+
+        return $permissions;
     }
 }

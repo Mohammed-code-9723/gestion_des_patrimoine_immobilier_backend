@@ -9,7 +9,6 @@ use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Throwable;
 
 class Command extends SymfonyCommand
 {
@@ -211,10 +210,6 @@ class Command extends SymfonyCommand
 
         try {
             return (int) $this->laravel->call([$this, $method]);
-        } catch (ManuallyFailedException $e) {
-            $this->components->error($e->getMessage());
-
-            return static::FAILURE;
         } finally {
             if ($this instanceof Isolatable && $this->option('isolated') !== false) {
                 $this->commandIsolationMutex()->forget($this);
@@ -242,13 +237,11 @@ class Command extends SymfonyCommand
      */
     protected function resolveCommand($command)
     {
-        if (is_string($command)) {
-            if (! class_exists($command)) {
-                return $this->getApplication()->find($command);
-            }
-
-            $command = $this->laravel->make($command);
+        if (! class_exists($command)) {
+            return $this->getApplication()->find($command);
         }
+
+        $command = $this->laravel->make($command);
 
         if ($command instanceof SymfonyCommand) {
             $command->setApplication($this->getApplication());
@@ -259,27 +252,6 @@ class Command extends SymfonyCommand
         }
 
         return $command;
-    }
-
-    /**
-     * Fail the command manually.
-     *
-     * @param  \Throwable|string|null  $exception
-     * @return void
-     *
-     * @throws \Illuminate\Console\ManuallyFailedException|\Throwable
-     */
-    public function fail(Throwable|string|null $exception = null)
-    {
-        if (is_null($exception)) {
-            $exception = 'Command failed manually.';
-        }
-
-        if (is_string($exception)) {
-            $exception = new ManuallyFailedException($exception);
-        }
-
-        throw $exception;
     }
 
     /**
