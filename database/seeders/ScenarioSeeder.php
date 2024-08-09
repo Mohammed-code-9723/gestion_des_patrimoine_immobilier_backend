@@ -10,6 +10,6 @@ class ScenarioSeeder extends Seeder
 {
     public function run(): void
     {
-        Scenario::factory()->count(10)->create();
+        Scenario::factory()->count(20)->create();
     }
 }

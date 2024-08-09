@@ -25,7 +25,7 @@ return new class extends Migration
             $table->unsignedBigInteger('site_id');
             $table->foreign('site_id')->references('id')->on('sites')->onDelete('cascade');
             $table->timestamps();
-            //add location and address
+            
         });
     }
 

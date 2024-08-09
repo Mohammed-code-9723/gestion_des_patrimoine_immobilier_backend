@@ -10,6 +10,6 @@ class IncidentSeeder extends Seeder
 {
     public function run(): void
     {
-        Incident::factory()->count(10)->create();
+        Incident::factory()->count(20)->create();
     }
 }
