@@ -25,6 +25,16 @@ Route::group([
     Route::middleware('auth:api')->post('/update_permissions', [UserController::class, 'updateUsersPermissions']);
     Route::middleware('auth:api')->get('/activities', [ActivityController::class, 'allActivities']);
     Route::middleware('auth:api')->post('/register', [UserController::class, 'register'])->name('register');
+    Route::middleware('auth:api')->delete('/workspaces/{id}', [WorkspaceController::class, 'deleteWorkspace']);
+    Route::middleware('auth:api')->post('/workspaces/{id}', [WorkspaceController::class, 'updateWorkspace']);
+    Route::middleware('auth:api')->post('/users/{id}/addWorkspace', [WorkspaceController::class, 'addWorkspace']);
+    Route::middleware('auth:api')->delete('/sites/{id}', [SiteController::class, 'deleteSite']);
+    //!super admin add site:
+    Route::middleware('auth:api')->post('{workspace}/addSite',[SiteController::class,'addNewSite']);
+    //!super admin update site:
+    Route::middleware('auth:api')->post('/update_site',[SiteController::class,'updateExistingSite']);
+    Route::middleware('auth:api')->get('/Components', [ComponentController::class, 'allComponents']);
+
 });
 
 // Protect workspaces and related routes with auth:api middleware
@@ -55,6 +65,8 @@ Route::group([
         Route::get('/{site}', [SiteController::class, 'show']);
         Route::put('/{site}', [SiteController::class, 'update']);
         Route::delete('/{site}', [SiteController::class, 'destroy']);
+        
+        
     });
 
     //!super admin all sites:
@@ -62,6 +74,13 @@ Route::group([
 
     //!super admin all buildings:
     Route::get('/allBuildings',[BuildingController::class,'index']);
+
+    //!super admin all projects:
+    Route::get('/allProjects', [ProjectController::class, 'allProjects']);
+    Route::post('{workspace_id}/addProject', [ProjectController::class, 'storeNewProjectSA']);
+    Route::delete('{workspace_id}/Projects/{project_id}', [ProjectController::class, 'destroyProject']);
+    Route::put('{workspace_id}/Projects/{project_id}', [ProjectController::class, 'updateProject']);
+
 
     Route::group([
         'prefix' => '{workspace}/buildings',

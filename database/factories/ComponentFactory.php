@@ -15,7 +15,23 @@ class ComponentFactory extends Factory
     {
         return [
             'code' => $this->faker->unique()->regexify('[A-Z0-9]{5}'),
-            'name' => $this->faker->word(),
+            'name' => $this->faker->randomElement([
+                'Appareils sanitaires', 
+                'Ascenseurs', 
+                'Couverture', 
+                'Electricité',
+                'Isolation thermique de plancher',
+                'Isolation thermique des murs',
+                'Isolation thermique de toiture',
+                'Menuiseries extérieures, baies vitrées, verrières',
+                'Plomberie',
+                'Production de chaud',
+                'Revêtements des sols, murs et plafonds',
+                'Sécurité et protection incendie',
+                'Structure',
+                'Ventilation',
+                'Revêtements de façade'
+            ]),
             'quantity' => $this->faker->randomFloat(2, 1, 100),
             'unit' => $this->faker->word(),
             'last_rehabilitation_year' => $this->faker->year(),

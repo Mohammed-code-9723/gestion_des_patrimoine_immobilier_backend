@@ -6,14 +6,17 @@ use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Events\UserAction;
+use App\Models\Workspace;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Auth;
+
 
 class ProjectController extends Controller
 {
     public function allProjects()
     {
         $projects = Project::with('scenarios')->get();
-        return response()->json(["projects"=>$projects]);
+        return response()->json(["projectsBackData"=>$projects]);
     }
     public function index($id)
     {
@@ -37,6 +40,34 @@ class ProjectController extends Controller
         return response()->json($projects);
     }
 
+    public function storeNewProjectSA(Request $request, $id)
+    {
+        $workspace = Workspace::find($id);
+
+        if (!$workspace) {
+            return response()->json(['message' => 'Workspace not found'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255|min:3',
+            'description' => 'required|string|max:255|min:3',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
+        $project = new Project();
+        $project->name = $request->name;
+        $project->description = $request->description;
+        $project->workspace_id = $workspace->id;
+        $project->save();
+
+        // Dispatch event
+        event(new UserAction(Auth::id(), 'created_project', 'User created a new project in workspace ' . $id));
+
+        return response()->json(['message'=>'User created a new project in workspace']);
+    }
     public function store(Request $request, $id)
     {
         $user = JWTAuth::parseToken()->authenticate();
@@ -137,6 +168,33 @@ class ProjectController extends Controller
         return response()->json($project);
     }
 
+    public function updateProject(Request $request, $workspaceId, $projectId)
+    {
+        
+        
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255|min:3',
+            'description' => 'required|string|max:255|min:3',
+        ]);
+        
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
+        $project = Project::find($projectId);
+
+        if (!$project) {
+            return response()->json(['message' => 'Project not found'], 404);
+        }
+        $project->name = $request->name;
+        $project->description = $request->description;
+        $project->save();
+
+        event(new UserAction(Auth::id(), 'updated_project', 'User updated project ' . $projectId . ' in workspace ' . $workspaceId));
+
+        return response()->json($project);
+    }
+
     public function destroy($workspaceId, $projectId)
     {
         $user = JWTAuth::parseToken()->authenticate();
@@ -159,8 +217,29 @@ class ProjectController extends Controller
 
         $project->delete();
 
-        // Dispatch event
         event(new UserAction($user->id, 'deleted_project', 'User deleted project ' . $projectId . ' in workspace ' . $workspaceId));
+
+        return response()->json(['message' => 'Project deleted']);
+    }
+
+    public function destroyProject($workspaceId, $projectId)
+    {
+
+        $workspace = Workspace::find($workspaceId);
+
+        if (!$workspace) {
+            return response()->json(['message' => 'Workspace not found'], 404);
+        }
+
+        $project = $workspace->projects()->find($projectId);
+
+        if (!$project) {
+            return response()->json(['message' => 'Project not found'], 404);
+        }
+
+        $project->delete();
+
+        event(new UserAction(Auth::id(), 'deleted_project', 'User deleted project ' . $projectId . ' in workspace ' . $workspaceId));
 
         return response()->json(['message' => 'Project deleted']);
     }

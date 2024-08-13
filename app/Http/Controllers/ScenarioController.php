@@ -10,6 +10,9 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ScenarioController extends Controller
 {
+
+    
+
     public function index($projectId)
     {
         $user = JWTAuth::parseToken()->authenticate();

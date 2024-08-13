@@ -10,9 +10,22 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ComponentController extends Controller
 {
+    public function allComponents()
+    {
+        $allComponents=Component::all();
+        return response()->json(['allComponents'=>$allComponents]);
+    }
+
     public function index()
     {
-        return Component::all();
+        $user = JWTAuth::parseToken()->authenticate();
+
+        if (!$user) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
+        }
+
+        $allComponents=Component::all();
+        return response()->json(['allComponents'=>$allComponents]);
     }
 
     public function store(Request $request)
