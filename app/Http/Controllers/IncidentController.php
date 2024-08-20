@@ -98,6 +98,9 @@ class IncidentController extends Controller
             'description' => 'required|string|max:255|min:3',
             'status' => 'required|string|max:50',
             'component_id' => 'required|exists:components,id',
+            //remember to remove the building_id
+            'building_id' => 'required|exists:buildings,id',
+            'user_id' => 'required|exists:users,id',
         ]);
 
         if ($validator->fails()) {
@@ -108,12 +111,13 @@ class IncidentController extends Controller
         $incident->description = $request->description;
         $incident->status = $request->status;
         $incident->component_id = $request->component_id;
+        $incident->building_id = $request->building_id;
+        $incident->user_id = $request->user_id;
         $incident->save();
 
-        // Dispatch event
         event(new UserAction($user->id, 'updated_incident', 'User updated incident ' . $incidentId . ' for building ' . $buildingId));
 
-        return response()->json($incident);
+        return response()->json(['message'=>"Incident updated successfully."]);
     }
 
     public function destroy($buildingId, $incidentId)

@@ -11,14 +11,20 @@ class Component extends Model
     protected $fillable = [
         'code',
         'name',
-        'type',
         'quantity',
         'unit',
         'last_rehabilitation_year',
         'condition',
         'severity_max',
         'risk_level',
+        'description',
+        'severity_safety',
+        'severity_operations',
+        'severity_work_conditions',
+        'severity_environment',
+        'severity_image',
         'building_id',
+        'characteristics'
     ];
 
     public function building()
@@ -29,5 +35,10 @@ class Component extends Model
     public function incidents()
     {
         return $this->hasMany(Incident::class);
+    }
+
+    public function maintenance_tasks()
+    {
+        return $this->hasMany(MaintenanceTask::class);
     }
 }

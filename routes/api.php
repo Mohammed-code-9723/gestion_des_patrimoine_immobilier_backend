@@ -35,6 +35,8 @@ Route::group([
     Route::middleware('auth:api')->post('/update_site',[SiteController::class,'updateExistingSite']);
     Route::middleware('auth:api')->get('/Components', [ComponentController::class, 'allComponents']);
 
+    
+
 });
 
 // Protect workspaces and related routes with auth:api middleware
@@ -65,8 +67,6 @@ Route::group([
         Route::get('/{site}', [SiteController::class, 'show']);
         Route::put('/{site}', [SiteController::class, 'update']);
         Route::delete('/{site}', [SiteController::class, 'destroy']);
-        
-        
     });
 
     //!super admin all sites:
@@ -85,12 +85,23 @@ Route::group([
     Route::group([
         'prefix' => '{workspace}/buildings',
     ], function () {
-        Route::apiResource('/', BuildingController::class);
+        
+        
+        Route::put('/{building}', [BuildingController::class, 'update']);
+        Route::post('/deleteBuilding',[ BuildingController::class, 'destroyBuilding']);
+        Route::post('/addBuilding', [BuildingController::class, 'store']);
+        Route::get('/{building}', [BuildingController::class, 'show']);
 
         Route::group([
             'prefix' => '{building}/components',
         ], function () {
-            Route::apiResource('/', ComponentController::class);
+            Route::put('/{component}', [ComponentController::class, 'update']);
+            Route::post('/deleteComponent',[ ComponentController::class, 'destroyComponent']);
+            Route::post('/addComponent', [ComponentController::class, 'store']);
+            Route::get('/{component}', [ComponentController::class, 'show']);
+
+            // Route::apiResource('/', ComponentController::class);
+
             Route::group([
                 'prefix' => '{component}/incidents',
             ], function () {

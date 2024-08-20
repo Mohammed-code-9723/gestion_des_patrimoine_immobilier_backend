@@ -13,6 +13,7 @@ class Building extends Model
         'name',
         'activity',
         'address',
+        'location',
         'year_of_construction',
         'surface',
         'type',
@@ -33,5 +34,10 @@ class Building extends Model
     public function incidents()
     {
         return $this->hasMany(Incident::class);
+    }
+
+    public function maintenance_tasks()
+    {
+        return $this->hasMany(MaintenanceTask::class);
     }
 }
