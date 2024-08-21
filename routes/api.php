@@ -28,12 +28,16 @@ Route::group([
     Route::middleware('auth:api')->delete('/workspaces/{id}', [WorkspaceController::class, 'deleteWorkspace']);
     Route::middleware('auth:api')->post('/workspaces/{id}', [WorkspaceController::class, 'updateWorkspace']);
     Route::middleware('auth:api')->post('/users/{id}/addWorkspace', [WorkspaceController::class, 'addWorkspace']);
+    //!super admin delete site:
     Route::middleware('auth:api')->delete('/sites/{id}', [SiteController::class, 'deleteSite']);
     //!super admin add site:
     Route::middleware('auth:api')->post('{workspace}/addSite',[SiteController::class,'addNewSite']);
     //!super admin update site:
     Route::middleware('auth:api')->post('/update_site',[SiteController::class,'updateExistingSite']);
+
     Route::middleware('auth:api')->get('/Components', [ComponentController::class, 'allComponents']);
+    //! super admin all incidents : 
+    Route::middleware('auth:api')->get('/allIncidents', [IncidentController::class, 'allIncidents']);
 
     
 
@@ -106,10 +110,10 @@ Route::group([
                 'prefix' => '{component}/incidents',
             ], function () {
                 Route::get('/', [IncidentController::class, 'index']);
-                Route::post('/', [IncidentController::class, 'store']);
+                Route::post('/addIncident', [IncidentController::class, 'store']);
                 Route::get('/{incident}', [IncidentController::class, 'show']);
                 Route::put('/{incident}', [IncidentController::class, 'update']);
-                Route::delete('/{incident}', [IncidentController::class, 'destroy']);
+                Route::post('/deleteIncident', [IncidentController::class, 'destroyIncident']);
             });
         });
 
@@ -120,7 +124,7 @@ Route::group([
             Route::post('/', [IncidentController::class, 'store']);
             Route::get('/{incident}', [IncidentController::class, 'show']);
             Route::put('/{incident}', [IncidentController::class, 'update']);
-            Route::delete('/{incident}', [IncidentController::class, 'destroy']);
+            Route::post('/{incident}', [IncidentController::class, 'destroy']);
         });
     });
 

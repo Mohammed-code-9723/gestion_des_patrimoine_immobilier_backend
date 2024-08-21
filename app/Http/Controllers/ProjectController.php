@@ -18,6 +18,7 @@ class ProjectController extends Controller
         $projects = Project::with('scenarios')->get();
         return response()->json(["projectsBackData"=>$projects]);
     }
+    
     public function index($id)
     {
         $user = JWTAuth::parseToken()->authenticate();
