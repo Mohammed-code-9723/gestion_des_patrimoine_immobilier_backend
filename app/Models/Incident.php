@@ -12,6 +12,7 @@ class Incident extends Model
         'title',
         'description',
         'status',
+        'critical',
         'user_id',
         'building_id',
         'component_id',

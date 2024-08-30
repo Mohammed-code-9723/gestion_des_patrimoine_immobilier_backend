@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Events\UserAction;
 use Illuminate\Support\Facades\Log;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Models\Building;
 
 class ComponentController extends Controller
 {
@@ -16,15 +17,19 @@ class ComponentController extends Controller
         return response()->json(['allComponents'=>$allComponents]);
     }
 
-    public function index()
+
+    public function index(Request $request)
     {
+        Log::info('building id to get its components:');
+        Log::info($request->building_id);
+
         $user = JWTAuth::parseToken()->authenticate();
 
         if (!$user) {
             return response()->json(['message' => 'Unauthenticated'], 401);
         }
 
-        $allComponents=Component::all();
+        $allComponents=Building::find($request->building_id)->components()->with('incidents')->get();
         return response()->json(['allComponents'=>$allComponents]);
     }
 

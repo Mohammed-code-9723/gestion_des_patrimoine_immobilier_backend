@@ -87,7 +87,7 @@ class WorkspaceController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
         try {
             $user = JWTAuth::parseToken()->authenticate();
@@ -96,7 +96,7 @@ class WorkspaceController extends Controller
                 return response()->json(['message' => 'Unauthenticated'], 401);
             }
 
-            $workspaces = $user->workspaces;
+            $workspaces = $user->workspaces()->with('projects')->with('sites')->get();
             return response()->json($workspaces);
         } catch (JWTException $e) {
             return response()->json(['message' => 'Could not authenticate token'], 401);

@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('password_confirmation');
             $table->enum('role',["admin", "superadmin", "technicien", "ingenieur", "manager"]);
             $table->json('permissions')->nullable();
+            $table->string('photo')->nullable();
+            $table->integer('responsable')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

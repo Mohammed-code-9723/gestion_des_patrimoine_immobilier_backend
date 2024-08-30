@@ -13,6 +13,12 @@ class BuildingController extends Controller
 {
     public function index()
     {
+        $allBuildings=Building::with('components')->with('incidents')->get();
+        return response()->json(["buildings"=>$allBuildings]);
+    }
+
+    public function getSiteBuildings($siteId){
+        
         $allBuildings=Building::with('components')->get();
         return response()->json(["buildings"=>$allBuildings]);
     }
@@ -26,7 +32,7 @@ class BuildingController extends Controller
             'activity' => 'required|string|max:255',
             'address' => 'required|string|max:255',
             'location' => 'required|json',
-            'year_of_construction' => 'required|integer',
+            'year_of_construction' => 'required',
             'surface' => 'required|numeric',
             'type' => 'required|string|max:255',
             'level_count' => 'required|string',
@@ -46,8 +52,8 @@ class BuildingController extends Controller
         $newBuilding->site_id=$validatedData["site_id"];
         $newBuilding->save();
 
-        Log::info("new building: ");
-        Log::info($newBuilding);
+        // Log::info("new building: ");
+        // Log::info($newBuilding);
 
         // Building::create($validatedData);
 
@@ -66,9 +72,10 @@ class BuildingController extends Controller
         return $building;
     }
 
-    public function update(Request $request,$building_id)
+    public function update(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
+        Log::info($request->all());
 
         if (!$user) {
             return response()->json(['message' => 'Unauthenticated'], 401);
@@ -87,7 +94,7 @@ class BuildingController extends Controller
             'site_id' => 'exists:sites,id',
         ]);
 
-        $building=Building::find($building_id);
+        $building=Building::find($request->id);
         $building->update($validatedData);
 
         if ($user) {

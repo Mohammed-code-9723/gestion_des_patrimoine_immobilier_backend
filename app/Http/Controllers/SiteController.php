@@ -29,6 +29,8 @@ class SiteController extends Controller
             return response()->json(['message' => 'Unauthenticated'], 401);
         }
 
+        
+
         // Retrieve the workspace
         $workspace = $user->workspaces()->find($workspaceId);
 
@@ -37,8 +39,8 @@ class SiteController extends Controller
         }
 
         // Retrieve the projects
-        $sites = $workspace->sites()->get();
-        return response()->json($sites);
+        $allSites = $workspace->sites()->with('buildings')->get();
+        return response()->json($allSites);
     }
 
     public function addNewSite(Request $request, $workspaceId)

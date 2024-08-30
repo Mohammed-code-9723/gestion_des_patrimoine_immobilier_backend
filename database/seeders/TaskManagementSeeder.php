@@ -3,13 +3,15 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use App\Models\Component;
 use Illuminate\Database\Seeder;
 
-class ComponentSeeder extends Seeder
+class TaskManagementSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
-        Component::factory()->count(40)->create();
+        //
     }
 }

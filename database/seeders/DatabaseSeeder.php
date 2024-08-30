@@ -22,7 +22,8 @@ class DatabaseSeeder extends Seeder
             ComponentSeeder::class,
             IncidentSeeder::class,
             ScenarioSeeder::class,
-            MaintenanceTaskSeeder::class
+            MaintenanceTaskSeeder::class,
+            ReportSeeder::class
         ]);
     }
 }

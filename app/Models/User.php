@@ -15,7 +15,7 @@ class User extends Authenticatable implements JWTSubject
         'permissions' => 'json', 
     ];
 
-    protected $fillable=["id","name","email","password","password_confirmation","role","permissions"];
+    protected $fillable=["id","name","email","password","password_confirmation","photo","responsable","role","permissions"];
     protected $hidden = [
         'password', 'remember_token',
     ];
@@ -33,6 +33,10 @@ class User extends Authenticatable implements JWTSubject
 
     public function maintenance_tasks(){
         return $this->hasMany(MaintenanceTask::class);
+    }
+
+    public function reports(){
+        return $this->hasMany(Report::class);
     }
 
     public function getJWTIdentifier()

@@ -52,7 +52,7 @@ class UserController extends Controller
             'permissions' => 'required'
         ]);
 
-        Log::info('Validated data:', $validatedData);
+        // Log::info('Validated data:', $validatedData);
 
         User::create([
             'name' => $validatedData['name'],
@@ -60,6 +60,7 @@ class UserController extends Controller
             'password' => Hash::make($validatedData['password']),
             'password_confirmation' => $validatedData['password'],
             'role' => $validatedData['role'],
+            'responsable' => Auth::id(),
             'permissions' => json_encode($validatedData['permissions'])
         ]);
 
@@ -98,13 +99,16 @@ class UserController extends Controller
     public function update(Request $request)
     {
         
-        Log::info('updated data:', $request->all());
+        Log::info('updated data:');
+        Log::info($request->all());
+        
         $validatedData = $request->validate([
             'id'=>'required|integer',
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string',
-            'role' => 'required|string|in:admin,manager,ingenieur,technicien',
+            'photo'=>'nullable|string',
+            'role' => 'required|string|in:superadmin,admin,manager,ingenieur,technicien',
         ]);
         
 
@@ -114,6 +118,13 @@ class UserController extends Controller
 
         if (!$user) {
             return response()->json(['message' => 'User not found'], 404);
+        }
+
+        if ($request->hasFile('photo')) {
+            $file = $request->file('photo');
+            $fileName = time() . '_' . $file->getClientOriginalName(); 
+            $file->move(public_path('images'), $fileName);
+            $validatedData['photo'] = "images/{$fileName}";
         }
 
 
@@ -127,7 +138,12 @@ class UserController extends Controller
         $user->password_confirmation =$validatedData['password'];
         $user->role =$validatedData['role'];
 
+        if (isset($validatedData['photo'])) {
+            $user->photo = $validatedData['photo'];
+        }
+
         $user->save();
+        Log::info('saved!');
 
         event(new UserAction(Auth::id(), 'update_user', 'User updated.'));
         return response()->json(['message' => 'User updated successfully', 'user' => $user], 200);
