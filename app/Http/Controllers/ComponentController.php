@@ -83,7 +83,7 @@ class ComponentController extends Controller
     public function update(Request $request)
     {
         
-
+        Log::info($request->all());
         $validatedData = $request->validate([
             // 'code' => 'required|string|max:255|unique:components,code',
             'name' => 'required|string|max:255',

@@ -9,7 +9,9 @@ use App\Http\Controllers\SiteController;
 use App\Http\Controllers\WorkspaceController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\MaintenanceTaskController;
 use App\Http\Controllers\ReportController;
+use App\Models\MaintenanceTask;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [UserController::class, 'login'])->name('login');
@@ -46,6 +48,12 @@ Route::group([
     Route::middleware('auth:api')->put('/update_report/{report}', [ReportController::class, 'update']);
     Route::middleware('auth:api')->post('/delete_report', [ReportController::class, 'destroyReport']);
 
+    //!maintenance routes:
+    Route::get('/getAllMaintenancesTasks', [MaintenanceTaskController::class, 'index']);
+    Route::get('/getAllMaintenancesTasksT', [MaintenanceTaskController::class, 'allForT']);
+    Route::post('/maintenances/addMaintenanceTask', [MaintenanceTaskController::class, 'store']);
+    Route::post('/maintenances/{maintenance}', [MaintenanceTaskController::class, 'updateMaintenance']);
+    Route::post('/deleteMaintenance', [MaintenanceTaskController::class, 'destroyMaintenance']);
 
 });
 

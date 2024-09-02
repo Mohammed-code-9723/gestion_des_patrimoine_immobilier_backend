@@ -42,8 +42,8 @@ class ScenarioController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255|min:3',
-            'start_year' => 'required|integer|min:1900|max:2100',
-            'end_year' => 'required|integer|min:1900|max:2100',
+            'start_year' => 'required|integer|min:1800',
+            'end_year' => 'required|integer|min:1800',
             // 'duration' => 'required|string|max:255',
             'maintenance_strategy' => 'required|string|max:255',
             'budgetary_constraint' => 'required|string|max:255',
@@ -64,6 +64,9 @@ class ScenarioController extends Controller
         $scenario->status = $request->status;
         $scenario->project_id = $request->project_id;
         $scenario->save();
+
+        Log::info("scenarios : ");
+        Log::info($scenario);
 
         // Dispatch event
         event(new UserAction($user->id, 'created_scenario', 'User created a new scenario for project ' ));
@@ -91,7 +94,7 @@ class ScenarioController extends Controller
         return response()->json($scenario);
     }
 
-    public function update(Request $request, $projectId, $scenarioId)
+    public function update(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
 
@@ -99,7 +102,7 @@ class ScenarioController extends Controller
             return response()->json(['message' => 'Unauthenticated'], 401);
         }
 
-        $scenario = Scenario::where('project_id', $projectId)->find($scenarioId);
+        $scenario = Scenario::find($request->id);
 
         if (!$scenario) {
             return response()->json(['message' => 'Scenario not found'], 404);
@@ -107,8 +110,8 @@ class ScenarioController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255|min:3',
-            'start_year' => 'required|integer|min:1900|max:2100',
-            'end_year' => 'required|integer|min:1900|max:2100',
+            'start_year' => 'required|integer|min:1800',
+            'end_year' => 'required|integer|min:1800',
             // 'duration' => 'required|string|max:255',
             'maintenance_strategy' => 'required|string|max:255',
             'budgetary_constraint' => 'required|string|max:255',
@@ -129,9 +132,9 @@ class ScenarioController extends Controller
         $scenario->save();
 
         // Dispatch event
-        event(new UserAction($user->id, 'updated_scenario', 'User updated scenario ' . $scenarioId . ' for project ' . $projectId));
+        event(new UserAction($user->id, 'updated_scenario', 'User updated scenario '));
 
-        return response()->json($scenario);
+        return response()->json(["message"=>"The scenario updated successfully."]);
     }
 
     public function destroy(Request $request)

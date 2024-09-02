@@ -22,6 +22,8 @@ return new class extends Migration
             $table->date('completion_date')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedBigInteger('assigned_to');
+            $table->foreign('assigned_to')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('building_id');
             $table->foreign('building_id')->references('id')->on('buildings')->onDelete('cascade');
             $table->unsignedBigInteger('component_id');

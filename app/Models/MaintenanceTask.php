@@ -17,6 +17,7 @@ class MaintenanceTask extends Model
         'scheduled_date',
         'completion_date',
         'user_id',
+        'assigned_to',
         'building_id',
         'component_id'
     ];

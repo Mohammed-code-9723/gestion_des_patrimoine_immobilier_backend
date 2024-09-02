@@ -32,6 +32,7 @@ class MaintenanceTaskFactory extends Factory
             'scheduled_date' => $this->faker->dateTimeBetween('now', '+1 year'),
             'completion_date' =>  $status === 'Completed' ? $this->faker->dateTimeBetween('now', '+1 year') : null,
             'user_id' => User::where('role','ingenieur')->pluck('id')->random(),
+            'assigned_to' => User::where('role','technicien')->pluck('id')->random(),
             'building_id' => Building::pluck('id')->random(),
             'component_id' => Component::pluck('id')->random(),
         ];
