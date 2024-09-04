@@ -7,5 +7,13 @@ Route::get('/', function () {
 });
 
 Route::get('/{path?}', function () {
-    return file_get_contents(public_path('react-build/index.html'));
+    $indexPath = public_path('react-build/index.html');
+
+    if (file_exists($indexPath)) {
+        return response()->file($indexPath, [
+            'Content-Type' => 'text/html',
+        ]);
+    } else {
+        abort(404, 'File not found');
+    }
 })->where('path', '.*');
